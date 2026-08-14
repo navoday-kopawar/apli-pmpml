@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="theme-color" content="#FFFAFA">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Apli PMPML">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nearby Stops</title>
+
+  <!-- PWA Manifest & Icons -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/PMPML-LOGO.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <!-- PWA App Controller -->
+  <script src="./pwa-app.js" defer></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: #ffffff;
+      color: #000;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .back-btn img {
+      width: 22px;
+      height: 22px;
+      cursor: pointer;
+    }
+
+    .header h2 {
+      font-size: 20px;
+      font-weight: 500;
+    }
+
+    /* Search */
+    .search-box {
+      margin: 14px;
+      background: #F5F5F5;
+      border-radius: 30px;
+      padding: 14px 18px;
+      font-size: 16px;
+      color: #777;
+    }
+
+    /* Section title */
+    .section-title {
+      padding: 6px 14px 10px;
+      font-size: 18px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    /* List */
+    .stop-list {
+      padding: 0 14px;
+    }
+
+    .stop-item {
+      padding: 14px 0;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .stop-left {
+      max-width: 75%;
+    }
+
+    .stop-name {
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .stop-direction {
+      font-size: 14px;
+      color: #777;
+    }
+
+    .stop-right {
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .distance {
+      font-size: 14px;
+      color: #777;
+      margin-bottom: 6px;
+    }
+
+    .view-buses {
+      font-size: 15px;
+      color: #4FA9B4;
+      font-weight: 500;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="back-btn" onclick="history.back()">
+      <img src="./assets/back-arrow-icon.png" alt="Back">
+    </div>
+    <h2>Nearby Stops</h2>
+  </div>
+
+  <!-- Search -->
+  <div class="search-box">
+    Enter stop name
+  </div>
+
+  <!-- Section -->
+  <div class="section-title">Nearby Stops</div>
+
+  <!-- List -->
+  <div class="stop-list">
+
+    <div class="stop-item">
+      <div class="stop-left">
+        <div class="stop-name">Kothrud Depot</div>
+        <div class="stop-direction">Towards Shinde Farm</div>
+      </div>
+      <div class="stop-right">
+        <div class="distance">202 m away</div>
+        <div class="view-buses">View Buses</div>
+      </div>
+    </div>
+
+    <div class="stop-item">
+      <div class="stop-left">
+        <div class="stop-name">Kothrud Depot</div>
+        <div class="stop-direction">Towards Bharati Nagar</div>
+      </div>
+      <div class="stop-right">
+        <div class="distance">211 m away</div>
+        <div class="view-buses">View Buses</div>
+      </div>
+    </div>
+
+    <div class="stop-item">
+      <div class="stop-left">
+        <div class="stop-name">Kothrud Depot</div>
+        <div class="stop-direction">Towards Shinde Farm</div>
+      </div>
+      <div class="stop-right">
+        <div class="distance">236 m away</div>
+        <div class="view-buses">View Buses</div>
+      </div>
+    </div>
+
+    <div class="stop-item">
+      <div class="stop-left">
+        <div class="stop-name">Ved Bhavan</div>
+        <div class="stop-direction">Towards Chandani Chowk Bypass</div>
+      </div>
+      <div class="stop-right">
+        <div class="distance">282 m away</div>
+        <div class="view-buses">View Buses</div>
+      </div>
+    </div>
+
+    <div class="stop-item">
+      <div class="stop-left">
+        <div class="stop-name">Vedbhavan</div>
+        <div class="stop-direction">Towards Futira Complex</div>
+      </div>
+      <div class="stop-right">
+        <div class="distance">311 m away</div>
+        <div class="view-buses">View Buses</div>
+      </div>
+    </div>
+
+    <div class="stop-item">
+      <div class="stop-left">
+        <div class="stop-name">Bharati Nagar</div>
+        <div class="stop-direction">Towards Kachara Depot Kothrud</div>
+      </div>
+      <div class="stop-right">
+        <div class="distance">331 m away</div>
+        <div class="view-buses">View Buses</div>
+      </div>
+    </div>
+
+    <div class="stop-item">
+      <div class="stop-left">
+        <div class="stop-name">Bharati Nagar</div>
+        <div class="stop-direction">Towards Kachara Depot Kothrud</div>
+      </div>
+      <div class="stop-right">
+        <div class="distance">336 m away</div>
+        <div class="view-buses">View Buses</div>
+      </div>
+    </div>
+
+    <div class="stop-item">
+      <div class="stop-left">
+        <div class="stop-name">Bharati Nagar</div>
+        <div class="stop-direction">Towards Kachara Depot Kothrud</div>
+      </div>
+      <div class="stop-right">
+        <div class="distance">340 m away</div>
+        <div class="view-buses">View Buses</div>
+      </div>
+    </div>
+
+    <div class="stop-item">
+      <div class="stop-left">
+        <div class="stop-name">Bharati Nagar</div>
+        <div class="stop-direction">Towards Kothrud Depot</div>
+      </div>
+      <div class="stop-right">
+        <div class="distance">351 m away</div>
+        <div class="view-buses">View Buses</div>
+      </div>
+    </div>
+
+    <div class="stop-item">
+      <div class="stop-left">
+        <div class="stop-name">Vedant Colony</div>
+        <div class="stop-direction">Towards Chandani Chowk</div>
+      </div>
+      <div class="stop-right">
+        <div class="distance">437 m away</div>
+        <div class="view-buses">View Buses</div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

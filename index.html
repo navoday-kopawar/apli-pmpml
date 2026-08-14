@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="mr">
+
+<head>
+  <!-- Meta -->
+  <meta charset="UTF-8" />
+  <meta name="theme-color" content="#FFFAFA">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Apli PMPML">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+  <!-- PWA Manifest & Icons -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" href="./assets/PMPML-LOGO.png?v=1">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/PMPML-LOGO.png?v=1">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+
+  <!-- Preload important images -->
+  <link rel="preload" as="image" href="./assets/PMPML-LOGO.png">
+  <link rel="preload" as="image" href="./assets/bus-ticket-icon.png">
+  <link rel="preload" as="image" href="./assets/daily-pass-icon.png">
+  <link rel="preload" as="image" href="./assets/view-ticket-icon.png">
+  <link rel="preload" as="image" href="./assets/view-pass-icon.png">
+  <link rel="preload" as="image" href="./assets/route-timetable-icon.png">
+  <link rel="preload" as="image" href="./assets/metro-ticket-icon.png">
+  <link rel="preload" as="image" href="./assets/home-icon.png">
+  <link rel="preload" as="image" href="./assets/buses-icon.png">
+  <link rel="preload" as="image" href="./assets/help-icon.png">
+
+  <title>PMPML Home</title>
+
+  <!-- Fonts & Styles -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <!-- PWA App Controller -->
+  <script src="./pwa-app.js" defer></script>
+  <!-- Location guard: redirects to location.html if location is disabled -->
+  <script src="./location-guard.js"></script>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <img src="./assets/PMPML-LOGO.png" alt="PMPML Logo" fetchpriority="high">
+    </div>
+
+    <div class="header-icons">
+      <a href="./notifications.html">
+        <img class="notification-icon" src="./assets/notification-icon.png" alt="Notifications">
+      </a>
+      <a href="./profile.html">
+        <img class="profile-icon" src="./assets/profile-icon.png" alt="Profile">
+      </a>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <div class="main">
+
+    <!-- Search -->
+    <div class="search-container">
+      <button class="search-box" onclick="goToSearchPage()">
+        <img src="./assets/search-icon.png" alt="Search">
+        <span>कुठे जायचे आहे?</span>
+      </button>
+    </div>
+
+    <!-- Actions -->
+    <div class="actions">
+
+      <div class="top-grid">
+
+
+        <a href="./bus-ticket.html" class="link-wrapper">
+          <div class="action-block">
+            <div class="action-card large">
+              <img src="./assets/bus-ticket-icon.png" alt="bus-ticket">
+            </div>
+            <div class="action-label">Bus Ticket</div>
+          </div>
+        </a>
+
+        <a href="./daily-pass.html" class="link-wrapper">
+          <div class="action-block">
+            <div class="action-card large">
+              <img src="./assets/daily-pass-icon.png" alt="Daily Pass">
+            </div>
+            <div class="action-label">Daily Pass</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="bottom-grid">
+        <a href="https://navoday-kopawar.github.io/MAZI_PMPML-OneDayTicket/" class="link-wrapper" target="_blank"
+          rel="noopener noreferrer">
+          <div class="action-block">
+            <div class="action-card small">
+              <img src="./assets/view-ticket-icon.png" alt="View Ticket">
+            </div>
+            <div class="action-label small">View<br>Ticket</div>
+          </div>
+        </a>
+
+        <a href="./daily-pass.html" class="link-wrapper"
+          target="_blank" rel="noopener noreferrer">
+          <div class="action-block">
+            <div class="action-card small">
+              <img src="./assets/view-pass-icon.png" alt="View Pass">
+            </div>
+            <div class="action-label small">View<br>Pass</div>
+          </div>
+        </a>
+
+        <a href="./route-timetable.html" class="link-wrapper">
+          <div class="action-block">
+            <div class="action-card small">
+              <img src="./assets/route-timetable-icon.png" alt="Route Timetable">
+            </div>
+            <div class="action-label small">Route Ti<br>metable</div>
+          </div>
+        </a>
+
+        <a href="https://mahametropune-alpha.billeasy.in/?t=aec289" class="link-wrapper" target="_blank"
+          rel="noopener noreferrer">
+          <div class="action-block">
+            <div class="action-card small">
+              <img src="./assets/metro-ticket-icon.png" alt="Metro Ticket" class="metro-icon">
+            </div>
+            <div class="action-label small">Metro<br>Ticket</div>
+          </div>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Near Me -->
+    <section class="section">
+      <div class="section-header">
+        <h3>Near Me</h3>
+        <a href="./show-all.html" class="link">Show all</a>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-left">
+            <img src="./assets/bus-icon.png" alt="Bus">
+            Fetching...
+          </div>
+          <div class="card-right">
+            <img src="./assets/direction-icon.png" alt="Directions">
+          </div>
+        </div>
+        <div class="card-footer">See More Buses</div>
+      </div>
+    </section>
+
+    <!-- Map -->
+    <section class="section mapsection">
+      <h3>Nearby</h3>
+      <div class="map">
+        <iframe id="liveMap" title="PMPML bus stops map" loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"></iframe>
+      </div>
+    </section>
+
+    <!-- Share -->
+    <div class="share">
+      <div class="share-text">
+        <p>Apli PMPML चा आनंद घेत<br>आहात 😍?<br>तुमच्या मित्रांसोबत शेअर करा</p>
+        <button onclick="shareApp()">आता शेअर करा</button>
+      </div>
+      <img src="./assets/public-icon.png" alt="Share Illustration">
+    </div>
+
+    <!-- Powered -->
+    <div class="powered">
+      <span>Powered by</span>
+      <img src="./assets/chart-icon.png" alt="Chart">
+      <span>for PMPML.</span>
+    </div>
+
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <div class="nav-item active">
+      <img src="./assets/home-icon.png" alt="Home">
+      <span>Home</span>
+    </div>
+
+    <div class="nav-item">
+      <img src="./assets/buses-icon.png" alt="Buses">
+      <span>Buses</span>
+    </div>
+
+    <a href="./help.html" class="nav-item">
+      <img src="./assets/help-icon.png" alt="Help">
+      <span>Help</span>
+    </a>
+  </nav>
+
+  <!-- Scripts -->
+  <script>
+    function goToSearchPage() {
+      window.location.href = "./search.html";
+    }
+  </script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const searchBox = document.querySelector('.search-box');
+      if (searchBox) {
+        searchBox.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') goToSearchPage();
+        });
+      }
+    });
+  </script>
+
+  <script>
+    function shareApp() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Apli PMPML',
+          text: 'Apli PMPML वापरून बस तिकीट काढा आणि प्रवास सोपा करा!',
+          url: window.location.origin
+        });
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        alert("Link copied to clipboard");
+      }
+    }
+  </script>
+
+  <script>
+    (function () {
+
+      const mapFrame = document.getElementById("liveMap");
+      if (!mapFrame) return;
+
+      // STEP 1: Show instant default map (no waiting)
+      mapFrame.src = "https://www.google.com/maps?q=Pune&z=13&output=embed&iwloc=B";
+
+      // STEP 2: After page ready → get real location
+      function updateToLiveLocation(position) {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+
+        mapFrame.src =
+          `https://www.google.com/maps?q=${lat},${lon}&z=15&output=embed&iwloc=B`;
+      }
+
+      // STEP 3: Try GPS without blocking UI
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          updateToLiveLocation,
+          () => { }, // keep default if denied
+          {
+            enableHighAccuracy: true,
+            timeout: 7000,
+            maximumAge: 30000
+          }
+        );
+      }
+
+    })();
+  </script>
+
+</body>
+
+</html>

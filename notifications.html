@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="theme-color" content="#FFFAFA">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Apli PMPML">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notifications</title>
+
+  <!-- PWA Manifest & Icons -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/PMPML-LOGO.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <!-- PWA App Controller -->
+  <script src="./pwa-app.js" defer></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: #ffffff;
+      color: #000;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+   
+
+    /* Header */
+    .header {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      border-bottom: 1px solid #eee;
+      background: #fff;
+    }
+
+    .back-btn {
+      position: absolute;
+      left: 14px;
+      cursor: pointer;
+    }
+
+    .back-btn img {
+      width: 22px;
+      height: 22px;
+    }
+
+    .header h2 {
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    /* Content */
+    .content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: #000;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+
+
+  <!-- Header -->
+  <div class="header">
+    <div class="back-btn" onclick="history.back()">
+      <img src="./assets/back-arrow-icon.png" alt="Back">
+    </div>
+    <h2>Notifications</h2>
+  </div>
+
+  <!-- Empty State -->
+  <div class="content">
+    No notifications available right now.
+  </div>
+
+</body>
+</html>

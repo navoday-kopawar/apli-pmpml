@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#FFFAFA">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Apli PMPML">
+  <title>Location Services Disabled</title>
+
+  <!-- PWA Manifest & Icons -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/PMPML-LOGO.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- PWA App Controller -->
+  <script src="./pwa-app.js" defer></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      background: #f2f2f2;
+      max-width: 420px;
+      margin: 0 auto;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px 52px;
+    }
+
+    /* Upper half — icon */
+    .icon-area {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-top: 40px;
+    }
+
+    .location-icon {
+      width: 90px;
+      height: 90px;
+      object-fit: contain;
+    }
+
+    /* Lower half — text + button */
+    .bottom-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #111111;
+      text-align: center;
+    }
+
+    .subtitle {
+      font-size: 15px;
+      color: #555555;
+      text-align: center;
+      line-height: 1.65;
+    }
+
+    .enable-btn {
+      width: 100%;
+      padding: 18px 20px;
+      background: #f07070;
+      color: #ffffff;
+      font-size: 16px;
+      font-weight: 600;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.2s, transform 0.1s;
+      letter-spacing: 0.2px;
+      line-height: 1.4;
+    }
+
+    .enable-btn:active {
+      transform: scale(0.98);
+      background: #d95e5e;
+    }
+
+    #statusMsg {
+      font-size: 13px;
+      color: #f07070;
+      text-align: center;
+      display: none;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Upper half: icon -->
+  <div class="icon-area">
+    <img class="location-icon" src="./assets/Location-icon.png" alt="Location">
+  </div>
+
+  <!-- Lower half: text + button -->
+  <div class="bottom-area">
+    <div class="title">Location Services Disabled</div>
+    <div class="subtitle">Location is important for using the app. Please turn on location services to use the app.</div>
+
+    <button class="enable-btn" id="enableBtn" onclick="requestLocation()">
+      Please turn on your location services.
+    </button>
+
+    <div id="statusMsg"></div>
+  </div>
+
+  <script>
+    /* ---- On load: if already granted, go straight to the app ---- */
+    checkAndRedirect();
+
+    /* Poll every 2s so that enabling from device settings auto-redirects */
+    const pollInterval = setInterval(checkAndRedirect, 2000);
+
+    function checkAndRedirect() {
+      if (!navigator.geolocation) return;
+      if (!navigator.permissions) return;
+
+      navigator.permissions.query({ name: 'geolocation' }).then(function (result) {
+        if (result.state === 'granted') {
+          clearInterval(pollInterval);
+          window.location.replace('./index.html');
+        }
+        result.onchange = function () {
+          if (this.state === 'granted') {
+            clearInterval(pollInterval);
+            window.location.replace('./index.html');
+          }
+        };
+      }).catch(function () {});
+    }
+
+    /* ---- Button: trigger permission prompt, no loading text ---- */
+    function requestLocation() {
+      if (!navigator.geolocation) {
+        showStatus('Geolocation is not supported by your browser.');
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        function () {
+          // Permission granted — redirect to app
+          clearInterval(pollInterval);
+          window.location.replace('./index.html');
+        },
+        function (error) {
+          if (error.code === error.PERMISSION_DENIED) {
+            showStatus('Permission denied. Please enable location in your device or browser settings, then tap the button again.');
+          } else if (error.code === error.POSITION_UNAVAILABLE) {
+            showStatus('Location unavailable. Please check your device GPS settings.');
+          } else {
+            showStatus('Could not get location. Please try again.');
+          }
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      );
+    }
+
+    function showStatus(msg) {
+      const status = document.getElementById('statusMsg');
+      status.innerText = msg;
+      status.style.display = 'block';
+    }
+  </script>
+
+</body>
+</html>
