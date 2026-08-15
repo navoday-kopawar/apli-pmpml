@@ -1,0 +1,32 @@
+{
+  "name": "Apli PMPML",
+  "short_name": "Apli PMPML",
+  "description": "The Apli PMPML app is the official mobile application for Pune Mahanagar Parivahan Mahamandal Limited (PMPML), developed to provide commuters with real-time bus tracking, digital ticket booking, and route planning across Pune and Pimpri-Chinchwad.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#FFFAFA",
+  "theme_color": "#3fa1ae",
+  "categories": ["travel", "transportation", "navigation"],
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

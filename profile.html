@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="theme-color" content="#FFFAFA">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Apli PMPML">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile</title>
+
+  <!-- PWA Manifest & Icons -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/PMPML-LOGO.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <!-- PWA App Controller -->
+  <script src="./pwa-app.js" defer></script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: #fff;
+      color: #000;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* ===== Header ===== */
+    .header {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 14px;
+      border-bottom: 1px solid #eaeaea;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-left img {
+      width: 22px;
+      height: 22px;
+    }
+
+    .header-title {
+      font-size: 18px;
+      font-weight: 500;
+    }
+
+    .menu-icon img {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* ===== Profile Row ===== */
+    .profile-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px 16px;
+      border-bottom: 1px solid #ededed;
+    }
+
+    .profile-row img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #e9f4f4;
+      padding: 6px;
+    }
+
+    .profile-name {
+      font-size: 17px;
+      font-weight: 500;
+    }
+
+    /* ===== List ===== */
+    .list {
+      flex: 1;
+    }
+
+    .list-item {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 16px 18px;
+      font-size: 16px;
+    }
+
+    .list-item img {
+      width: 22px;
+      height: 22px;
+    }
+
+    /* ===== Footer ===== */
+    .footer {
+      padding: 18px;
+    }
+
+    .follow-text {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    .social-icons {
+      display: flex;
+      gap: 22px;
+      margin-bottom: 12px;
+    }
+
+    .social-icons img {
+      width: 26px;
+      height: 26px;
+    }
+
+    .version {
+      font-size: 14px;
+      color: #777;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <img src="./assets/back-arrow-icon.png" onclick="history.back()">
+      <div class="header-title">My Profile</div>
+    </div>
+    <div class="menu-icon">
+      <img src="./assets/my-location.png">
+    </div>
+  </div>
+
+  <!-- Profile -->
+  <div class="profile-row">
+    <img src="./assets/profile-name-icon.png">
+    <div class="profile-name" id="profileName"></div>
+  </div>
+
+  <!-- List -->
+  <div class="list">
+
+    <a href="/view-ticket.html" class="list-item">
+      <img src="./assets/myticket-icon.png">
+      <span>My Tickets</span>
+    </a>
+
+    <a href="/view-pass.html" class="list-item">
+      <img src="./assets/daily-pass-icon.png">
+      <span>My Passes</span>
+    </a>
+
+    <a href="/complaints.html" class="list-item">
+      <img src="./assets/complaints-icon.png">
+      <span>Complaints</span>
+    </a>
+
+    <div class="list-item" onclick="shareApp()">
+      <img src="./assets/shareapp-icon.png">
+      <span>Share app</span>
+    </div>
+
+    <a href="https://play.google.com/store" target="_blank" class="list-item">
+      <img src="./assets/rateus-icon.png">
+      <span>Rate Us</span>
+    </a>
+
+    <a href="/validate.html" class="list-item">
+      <img src="./assets/validation-icon.png">
+      <span>Validate Pass / Ticket</span>
+    </a>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="follow-text">Follow us on :</div>
+    <div class="social-icons">
+      <img src="./assets/youtube-icon.png">
+      <img src="./assets/instagram-icon.png">
+      <img src="./assets/x-icon.png">
+    </div>
+    <div class="version">App version : 1.0.13.1 (25)</div>
+  </div>
+
+  <script>
+    // Dynamic name
+    document.getElementById("profileName").innerText = "Navoday";
+
+    // Share
+    function shareApp() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Apli PMPML',
+          text: 'Apli PMPML वापरून बस तिकीट काढा आणि प्रवास सोपा करा!',
+          url: window.location.origin
+        });
+      }
+    }
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="theme-color" content="#FFFAFA">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Apli PMPML">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Route Timetable</title>
+
+  <!-- PWA Manifest & Icons -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/PMPML-LOGO.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <!-- PWA App Controller -->
+  <script src="./pwa-app.js" defer></script>
+ 
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: #ffffff;
+      color: #000;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Search */
+    .top-search {
+      padding: 14px;
+    }
+
+    .search-pill {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 30px;
+      border: 1.5px solid #E0E0E0;
+      font-size: 18px;
+      color: #777;
+    }
+
+    .search-pill img {
+      width: 22px;
+      height: 22px;
+      cursor: pointer;
+    }
+
+    .search-pill input {
+      border: none;
+      outline: none;
+      background: transparent;
+      width: 100%;
+      font-size: 18px;
+    }
+
+    .search-pill input::placeholder {
+      color: #777;
+    }
+
+    /* Empty space */
+    .content {
+      flex: 1;
+    }
+
+    /* Bottom Nav */
+    .bottom-nav {
+      height: 56px;
+      border-top: 1px solid #eee;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background: #fff;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: #777;
+    }
+
+    .nav-item img {
+      width: 22px;
+      height: 22px;
+    }
+
+    .nav-item.active {
+      color: #000;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Search -->
+  <div class="top-search">
+    <div class="search-pill">
+      <img src="./assets/back-arrow-icon.png" alt="Back" onclick="history.back()">
+      <input type="text" placeholder="Enter Route" autofocus>
+    </div>
+  </div>
+
+  <!-- Empty Content -->
+  <div class="content"></div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <div class="nav-item active">
+      <img src="./assets/home-icon.png" alt="Home">
+      <span>Home</span>
+    </div>
+    <div class="nav-item">
+      <img src="./assets/buses-icon.png" alt="Buses">
+      <span>Buses</span>
+    </div>
+    <div class="nav-item">
+      <img src="./assets/help-icon.png" alt="Help">
+      <span>Help</span>
+    </div>
+  </nav>
+
+</body>
+</html>

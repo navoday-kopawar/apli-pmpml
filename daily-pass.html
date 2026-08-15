@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="theme-color" content="#FFFAFA">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Apli PMPML">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Pass</title>
+
+  <!-- PWA Manifest & Icons -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/PMPML-LOGO.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <!-- PWA App Controller -->
+  <script src="./pwa-app.js" defer></script>
+  <!-- Location guard: redirects to location.html if location is disabled -->
+  <script src="./location-guard.js"></script>
+  <style>
+    /* 1.GLOBAL BASE */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: #ffffff;
+      padding-top: 70px;
+      padding-bottom: 110px;
+      max-width: 420px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      line-height: 1.4;
+    }
+
+    /* 2. HEADER SECTION*/
+    .header {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      margin-top: 10px;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 22px 10px 16px;
+      background: #ffffff;
+      z-index: 1000;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .header h2 {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .header img {
+      width: 18px;
+    }
+
+    .timer {
+      font-size: 14px;
+      font-weight: 300;
+    }
+
+    /* 3. TICKET CARD CONTAINER */
+    .ticket-card {
+      margin: 11px 12px;
+      background: #fafafa;
+      border-radius: 14px;
+      border: 1px solid #e0e0e0;
+      position: relative;
+      -webkit-mask:
+        radial-gradient(circle 17px at left 44%, transparent 16px, black 17px),
+        radial-gradient(circle 17px at right 44%, transparent 16px, black 17px),
+        linear-gradient(black, black);
+      -webkit-mask-composite: destination-out, destination-out, source-over;
+      mask:
+        radial-gradient(circle 17px at left 44%, transparent 16px, black 17px),
+        radial-gradient(circle 17px at right 44%, transparent 16px, black 17px),
+        linear-gradient(black, black);
+    }
+
+    .ticket-date {
+      background: #239653;
+      color: #fff;
+      padding: 10px 18px 10px 22px;
+      font-size: 14px;
+      font-weight: 500;
+      border: 2px solid #239653;
+      border-radius: 14px 14px 0 0;
+    }
+
+    .ticket-body {
+      padding: 0 18px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      color: #4d4d4d;
+      margin: 18px 0 12px;
+      font-weight: 500;
+    }
+
+    /* 4. PASS TYPE SELECTION */
+    .pass-options {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .pass-option {
+      padding: 10px 16px;
+      border: 1.2px solid #e0e0e0;
+      border-radius: 8px;
+      background: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      transition: all 0.2s;
+      color: #333;
+      width: fit-content;
+      min-width: 170px;
+    }
+
+    .pass-option.selected {
+      background: #daf2e4;
+      border-color: #daf2e4;
+    }
+
+    /* 5. PERFORATION DIVIDER */
+    .perforation {
+      height: 1.2px;
+      background: repeating-linear-gradient(to right,
+          #CCC 3.5px,
+          #CCC 8px,
+          transparent 8px,
+          transparent 16.2px);
+      margin: 20px -18px 20px;
+      position: relative;
+    }
+
+    .perforation:before,
+    .perforation:after {
+      content: "";
+      position: absolute;
+      top: -15px;
+      width: 30px;
+      height: 30px;
+      background: #ffffff;
+      border-radius: 50%;
+      border: 1px solid #e0e0e0;
+    }
+
+    .perforation:before {
+      left: -18px;
+    }
+
+    .perforation:after {
+      right: -18px;
+    }
+
+    /* 6. ID INPUT SECTION */
+    .id-input-wrap {
+      margin-top: 15px;
+    }
+
+    .id-input {
+      width: 100%;
+      height: 52px;
+      border-radius: 6px;
+      border: 1.2px solid #e0e0e0;
+      font-size: 20px;
+      font-weight: 400;
+      outline: none;
+      color: #000000;
+      background: transparent;
+      caret-color: #3fa1ae;
+      margin-bottom: 12px;
+      text-align: center;
+      letter-spacing: 28px;
+      padding-left: 28px; /* Offset the letter-spacing to center the text */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .info-box {
+      background: #fff4e5;
+      color: #4d4d4d;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-size: 15px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .warning-box {
+      background: #fff4e5;
+      color: #b37318;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin: 15px 0 25px;
+      line-height: 1.4;
+    }
+
+    /* 7. FINAL FARE CARD */
+    .final-fare-card {
+      margin: 11px 12px;
+      background: #fff;
+      border-radius: 12px;
+      border: 1.2px solid #e0e0e0;
+      padding: 14px 18px;
+      cursor: pointer;
+    }
+
+    .final-fare-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .final-fare-label {
+      font-size: 18px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #000;
+    }
+
+    .info-icon {
+      width: 18px;
+      height: 18px;
+      opacity: 0.6;
+    }
+
+    .final-fare-amount {
+      font-size: 20px;
+      font-weight: 700;
+      color: #219653;
+    }
+
+    .fare-breakdown {
+      display: none;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1.2px dashed #e0e0e0;
+    }
+
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 15px;
+      color: #8e8e93;
+    }
+
+    .breakdown-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .breakdown-value {
+      color: #4d4d4d;
+      font-weight: 400;
+    }
+
+    /* 8. FIXED PAY BAR */
+    .pay-bar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 420px;
+      background: #ffffff;
+      border-top: 1px solid #f2f2f2;
+      padding: 14px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .pay-using {
+      display: flex;
+      flex-direction: column;
+      min-width: 115px;
+    }
+
+    .pay-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: #808080;
+      text-decoration: underline 1px solid #808080;
+      padding-bottom: 2px;
+      width: max-content;
+      margin-bottom: 6px;
+    }
+
+    .caret {
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-bottom: 7px solid #808080;
+    }
+
+    .pay-method {
+      display: flex;
+      align-items: center;
+     
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .pay-method img {
+      width: 46px;
+    }
+
+    .pay-btn {
+      flex: 1;
+      height: 62px;
+      background: #219653;
+      color: #fff;
+      font-size: 21px;
+      border: none;
+      border-radius: 7px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.9);
+      background: #1f1f1f;
+      color: #fff;
+      padding: 14px 22px;
+      border-radius: 15px;
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 9999;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+
+    /* 9. MODAL STYLING */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    .payment-modal {
+      background: #fff;
+      width: 88%;
+      max-width: 360px;
+      border-radius: 20px;
+      padding: 24px 15px;
+      text-align: center;
+      animation: slideUp 0.2s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #000;
+      margin-bottom: 25px;
+    }
+
+    .payment-options-grid {
+      display: flex;
+      justify-content: space-around;
+      gap: 10px;
+    }
+
+    .payment-option-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .payment-option-item img {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+    }
+
+    .payment-option-item span {
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <div class="header-left">
+      <img src="./assets/back-arrow-icon.png" alt="back-arrow" onclick="history.back()">
+      <h2>Daily Pass</h2>
+    </div>
+    <div class="timer" id="timer">05:00</div>
+  </div>
+
+  <div class="ticket-card">
+    <div class="ticket-date" id="ticketDate"></div>
+    <div class="ticket-body">
+      <div class="section-title">Select pass type</div>
+      <div class="pass-options" id="passOptions">
+        <div class="pass-option" data-price="70" data-info="Valid in all routes of PMC and PCMC">PMC & PCMC - ₹70.0</div>
+        <div class="pass-option" data-price="150" data-info="Valid in all routes of PMPML">All Route - ₹150.0</div>
+      </div>
+
+      <div id="passInfo" class="info-box"></div>
+
+      <div class="perforation"></div>
+
+      <div class="section-title">Enter last 4 digits of your Aadhar Card or Pan Card</div>
+      <input type="text" class="id-input" placeholder="" maxlength="4" id="idInput">
+
+      <div class="warning-box">
+        You should have a valid ID with above details.
+      </div>
+    </div>
+  </div>
+
+  <div class="final-fare-card" id="fareCard">
+    <div class="final-fare-header">
+      <div class="final-fare-label">
+        Final Fare <img src="./assets/Info-icon.png" class="info-icon">
+      </div>
+      <div class="final-fare-amount">₹<span id="finalAmount">70.83</span></div>
+    </div>
+    <div class="fare-breakdown" id="fareBreakdown">
+      <div class="breakdown-row">
+        <span>Base Fare</span>
+        <span class="breakdown-value">₹<span id="baseFare">70.0</span></span>
+      </div>
+      <div class="breakdown-row">
+        <span>Convenience fee</span>
+        <span class="breakdown-value">₹0.7</span>
+      </div>
+      <div class="breakdown-row">
+        <span>GST on Convenience fee</span>
+        <span class="breakdown-value">₹0.13</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="pay-bar">
+    <div class="pay-using">
+      <div class="pay-label"> PAY USING <span class="caret"></span></div>
+      <div class="pay-method">
+        <img src="./assets/PayUsing-icon.png" alt="pay">
+        <span>Select</span>
+      </div>
+    </div>
+    <button class="pay-btn" id="payBtn">₹70.83</button>
+  </div>
+
+  <div id="toast"></div>
+
+  <!-- Payment Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="payment-modal">
+      <div class="modal-title">Select Payment Mode</div>
+      <div class="payment-options-grid">
+        <div class="payment-option-item" onclick="selectPayment('PhonePe', './assets/phonepay-icon.png')">
+          <img src="./assets/phonepay-icon.png" alt="PhonePe">
+          <span>PhonePe</span>
+        </div>
+        <div class="payment-option-item" onclick="selectPayment('GPay', './assets/gpay-icon.png')">
+          <img src="./assets/gpay-icon.png" alt="GPay">
+          <span>GPay</span>
+        </div>
+        <div class="payment-option-item" onclick="selectPayment('Amazon', './assets/amazon-icon.png')">
+          <img src="./assets/amazon-icon.png" alt="Amazon">
+          <span>Amazon</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ---------------- DATE & TIME ---------------- */
+    function updateDateTime() {
+      const d = new Date();
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      let h = d.getHours();
+      const m = String(d.getMinutes()).padStart(2, "0");
+      const ampm = h >= 12 ? "PM" : "AM";
+      h = h % 12 || 12;
+      document.getElementById("ticketDate").innerText =
+        `${d.getDate()} ${months[d.getMonth()]}, ${d.getFullYear()} | ${String(h).padStart(2, '0')}:${m} ${ampm}`;
+    }
+    setInterval(updateDateTime, 1000);
+    updateDateTime();
+
+    /* ---------------- TIMER ---------------- */
+    const timerElement = document.getElementById("timer");
+    let totalSeconds = 5 * 60;
+    const countdown = setInterval(() => {
+      if (totalSeconds <= 0) {
+        clearInterval(countdown);
+        timerElement.innerText = "00:00";
+        showToast("Session Expired");
+      } else {
+        totalSeconds--;
+        const mins = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+        const secs = String(totalSeconds % 60).padStart(2, "0");
+        timerElement.innerText = `${mins}:${secs}`;
+      }
+    }, 1000);
+
+    /* ---------------- PASS SELECTION ---------------- */
+    const passOptions = document.querySelectorAll(".pass-option");
+    const passInfo = document.getElementById("passInfo");
+    const finalAmount = document.getElementById("finalAmount");
+    const baseFare = document.getElementById("baseFare");
+    const payBtn = document.getElementById("payBtn");
+    const idInput = document.getElementById("idInput");
+    const fareCard = document.getElementById("fareCard");
+    const fareBreakdown = document.getElementById("fareBreakdown");
+    let selectedPrice = 70; // Default to 70 based on reference image
+
+    passOptions.forEach(option => {
+      option.addEventListener("click", () => {
+        passOptions.forEach(opt => opt.classList.remove("selected"));
+        option.classList.add("selected");
+        selectedPrice = parseFloat(option.dataset.price);
+        
+        // Show info box
+        passInfo.innerText = option.dataset.info;
+        passInfo.style.display = "block";
+
+        // Update amounts with convenience fee
+        const total = (selectedPrice + 0.83).toFixed(2);
+        baseFare.innerText = selectedPrice.toFixed(1);
+        finalAmount.innerText = total;
+        payBtn.innerText = `₹${total}`;
+      });
+    });
+
+    // Expand breakdown on click
+    fareCard.addEventListener("click", () => {
+      const isVisible = fareBreakdown.style.display === "block";
+      fareBreakdown.style.display = isVisible ? "none" : "block";
+    });
+
+    /* ---------------- TOAST ---------------- */
+    function showToast(msg) {
+      const toast = document.getElementById("toast");
+      toast.innerText = msg;
+      toast.classList.add("show");
+      setTimeout(() => toast.classList.remove("show"), 3000);
+    }
+
+    /* ---------------- PAY BUTTON ---------------- */
+    payBtn.addEventListener("click", () => {
+      if (selectedPrice === 0) {
+        showToast("Please select a pass type");
+        return;
+      }
+      if (idInput.value.length < 4) {
+        showToast("Please enter last 4 digits of ID");
+        return;
+      }
+      showToast("Processing Payment...");
+    });
+
+    /* ---------------- MODAL LOGIC ---------------- */
+    const modalOverlay = document.getElementById("modalOverlay");
+    const payUsing = document.querySelector(".pay-using");
+    const currentPayIcon = document.querySelector(".pay-method img");
+    const currentPayName = document.querySelector(".pay-method span");
+
+    payUsing.addEventListener("click", () => {
+      modalOverlay.style.display = "flex";
+    });
+
+    modalOverlay.addEventListener("click", (e) => {
+      if (e.target === modalOverlay) {
+        modalOverlay.style.display = "none";
+      }
+    });
+
+    function selectPayment(name, icon) {
+      currentPayName.innerText = name;
+      currentPayIcon.src = icon;
+      modalOverlay.style.display = "none";
+    }
+  </script>
+</body>
+
+</html>

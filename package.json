@@ -1,0 +1,19 @@
+{
+  "name": "apli-pmpml",
+  "version": "1.0.0",
+  "description": "Official mobile application for Pune Mahanagar Parivahan Mahamandal Limited (PMPML)",
+  "main": "index.html",
+  "scripts": {
+    "build": "node build.js",
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "pmpml",
+    "pwa",
+    "bus-tracking",
+    "pune",
+    "transit"
+  ],
+  "author": "PMPML",
+  "license": "ISC"
+}

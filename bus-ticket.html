@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="theme-color" content="#FFFAFA">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Apli PMPML">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ticket Details</title>
+
+  <!-- PWA Manifest & Icons -->
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/PMPML-LOGO.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+  <link rel="stylesheet" href="./styles.css">
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <!-- PWA App Controller -->
+  <script src="./pwa-app.js" defer></script>
+  <!-- Location guard: redirects to location.html if location is disabled -->
+  <script src="./location-guard.js"></script>
+  <style>
+    /* 1.GLOBAL BASE */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: #ffffff;
+      padding-top: 70px;
+      padding-bottom: 110px;
+      max-width: 420px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      line-height: 1.4;
+      /* overflow: hidden; */
+    }
+
+    /* 2. HEADER SECTION*/
+    .header {
+      position: fixed;
+      top: 0;
+      left: 50%;
+      margin-top: 10px;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 22px 10px 16px;
+      background: #ffffff;
+      z-index: 1000;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .header h2 {
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .header img {
+      width: 18px;
+    }
+
+    .timer {
+      font-size: 14px;
+      font-weight: 300;
+    }
+
+    /* 3. TICKET CARD CONTAINER */
+    .ticket-card {
+      margin: 11px 12px;
+      background: #fafafa;
+      border-radius: 14px;
+      border: 1px solid #e0e0e0;
+      position: relative;
+      -webkit-mask:
+        radial-gradient(circle 17px at left 55%, transparent 16px, black 17px),
+        radial-gradient(circle 17px at right 55%, transparent 16px, black 17px),
+        linear-gradient(black, black);
+      -webkit-mask-composite: destination-out, destination-out, source-over;
+
+      mask:
+        radial-gradient(circle 17px at left 55%, transparent 16px, black 17px),
+        radial-gradient(circle 17px at right 55%, transparent 16px, black 17px),
+        linear-gradient(black, black);
+    }
+
+    .ticket-date {
+      background: #239653;
+      color: #fff;
+      padding: 10px 18px 10px 22px;
+      font-size: 14px;
+      font-weight: 500;
+      border: 2px solid #239653;
+    }
+
+    .ticket-body {
+      padding: 0 18px;
+    }
+
+    /* 4. ROUTE SELECTION */
+
+    .route-select {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 16px 0 14px;
+    }
+
+    .route-icon {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
+
+    .route-input {
+      flex: 1;
+      height: 40px;
+      border-radius: 5px;
+      border: 1.2px solid #e0e0e0;
+      padding: 0 12px;
+      font-size: 17px;
+      font-weight: 400;
+      outline: none;
+      color: #000000;
+      background: #fafafa;
+      caret-color: #53bdc0;
+    }
+
+    .route-input::placeholder {
+      color: #646464;
+      font-weight: 400;
+    }
+
+    /* 5. STOPS SECTION (VERTICAL RAIL) */
+
+    .divider {
+      height: 1px;
+      background: #e6e6e6;
+      margin: 8px 0 26px;
+    }
+
+
+    .stops-wrap {
+      display: flex;
+      align-items: flex-start;
+      /* Align from top */
+      padding-left: 4px;
+    }
+
+    .stops-rail {
+      position: relative;
+      width: 26px;
+      height: 85px;
+    }
+
+    .stop-circle {
+      position: absolute;
+      left: 4px;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      border: 3.5px solid #808080;
+      background: #fff;
+    }
+
+    .stop-circle.start {
+      top: 4px;
+    }
+
+    .stop-circle.end {
+      bottom: 0;
+    }
+
+    .dash {
+      position: absolute;
+      width: 3px;
+      left: 9px;
+      border-radius: 6px;
+      background: #808080;
+    }
+
+    .dash.short {
+      height: 6px;
+    }
+
+    .dash.long {
+      height: 10px;
+    }
+
+    .dash:nth-child(1) {
+      top: 24px;
+    }
+
+    .dash:nth-child(2) {
+      top: 32px;
+    }
+
+    .dash:nth-child(3) {
+      top: 45px;
+    }
+
+    .dash:nth-child(4) {
+      top: 58px;
+    }
+
+
+    .stops-text {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding-top: 4px;
+      /* matches top circle offset */
+    }
+
+    .stop-label {
+      font-size: 14px;
+      color: #8e8e93;
+      margin-bottom: 4px;
+      line-height: 14px;
+      height: 14px;
+    }
+
+
+    /* 6. PERFORATION DIVIDER */
+
+    .perforation {
+      height: 1.2px;
+      background: repeating-linear-gradient(to right,
+          #CCC 3.5px,
+          #CCC 8px,
+          transparent 8px,
+          transparent 16.2px);
+      margin: 27px -18px 25px;
+      position: relative;
+    }
+
+    .perforation:before,
+    .perforation:after {
+      content: "";
+      position: absolute;
+      top: -18px;
+      width: 30px;
+      height: 30px;
+      background: #ffffff;
+      border-radius: 50%;
+      border: 1px solid #e0e0e0;
+    }
+
+    .perforation:before {
+      left: -18px;
+    }
+
+    .perforation:after {
+      right: -18px;
+    }
+
+    /* 7. FARE TOGGLE */
+
+    .toggle {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 25px;
+    }
+
+    .toggle button {
+      flex: 1;
+      height: 36px;
+      border-radius: 6px;
+      border: 1px solid #eaeaea;
+      background: #fff;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .toggle .active {
+      background: #219653;
+      color: #fff;
+      border-color: #219653;
+    }
+
+    /* 8. PRICE & COUNTER SECTION */
+    .section-title {
+      font-size: 15px;
+      color: #808080;
+      margin: 10px 0;
+    }
+
+    .price-chip {
+      display: inline-block;
+      padding: 8px 10px;
+      border: 1px solid #e5e5e5;
+      border-radius: 10px;
+      background: #fafafa;
+      cursor: pointer;
+    }
+
+    .ticket-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 8px 0;
+      font-size: 17px;
+      font-weight: 500;
+    }
+
+    .counter {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .counter button {
+      width: 25px;
+      height: 38px;
+      border-radius: 6px;
+      color: #808080;
+      border: 1px solid #e5e5e5;
+      background: #fff;
+      font-size: 20px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .counter span {
+      width: 35px;
+      height: 35px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      background: #fff;
+      border-radius: 6px;
+      color: #4d4d4d;
+      border: 1px solid #e5e5e5;
+    }
+
+    /* 9. FIXED PAY BAR */
+    .pay-bar {
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 420px;
+      background: #ffffff;
+      border-top: 1px solid #f2f2f2;
+      padding: 14px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .pay-using {
+      display: flex;
+      flex-direction: column;
+      min-width: 115px;
+    }
+
+    .pay-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: #808080;
+      text-decoration: underline 1px solid #808080;
+      padding-bottom: 2px;
+      width: max-content;
+      margin-bottom: 6px;
+    }
+
+    .caret {
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-bottom: 7px solid #808080;
+    }
+
+    .pay-method {
+      display: flex;
+      align-items: center;
+
+      font-size: 16px;
+      font-weight: 500;
+    }
+
+    .pay-method img {
+      width: 46px;
+    }
+
+    .pay-btn {
+      flex: 1;
+      height: 62px;
+      background: #219653;
+      color: #fff;
+      font-size: 21px;
+      border: none;
+      border-radius: 7px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .dropdown {
+      position: absolute;
+      top: 110%;
+      left: 0;
+      right: 0;
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 12px;
+      max-height: 260px;
+      overflow-y: auto;
+      z-index: 50;
+      display: none;
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px 14px;
+      border-bottom: 1px solid #eee;
+      font-size: 16px;
+    }
+
+    .dropdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown div {
+      padding: 12px;
+      font-size: 15px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+    }
+
+    .dropdown div:last-child {
+      border-bottom: none;
+    }
+
+    .dropdown div:hover {
+      background: #f3f4f6;
+    }
+
+    .route-display {
+      flex: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .route-number {
+      font-size: 22px;
+      font-weight: 700;
+      line-height: 22px;
+    }
+
+    .route-direction {
+      font-size: 15px;
+      color: #8e8e93;
+      margin-top: 2px;
+    }
+
+    .stop-content {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stop-content:first-child {
+      height: 68px; /* Targets 72px offset (4px padding + 68px height) */
+      margin-bottom: 0;
+    }
+
+    /* Remove the dynamic margins as they are no longer needed with fixed height */
+    .stop-content:first-child:has(#startDisplay:not([style*="display: none"])) {
+      margin-bottom: 0;
+    }
+
+    .stop-content:first-child:has(#startInput:not([style*="display: none"])) {
+      margin-bottom: 0;
+    }
+
+    .stop-content input {
+      width: 100%;
+      height: 40px;
+      border-radius: 5px;
+      border: 1.2px solid #e0e0e0;
+      padding: 0 12px;
+      font-size: 17px;
+      font-weight: 400;
+      outline: none;
+      color: #000000;
+      background: #fafafa;
+      caret-color: #53bdc0;
+    }
+
+    .stop-content::placeholder {
+      color: #646464;
+      font-weight: 400;
+    }
+
+    .stop-display {
+      display: none;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 20px;
+      padding: 0;
+      line-height: 24px;
+      height: 24px;
+    }
+
+    .stop-display img {
+      width: 17px;
+      opacity: .7;
+    }
+
+    .ticket-label {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .fare {
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .price-chip {
+      display: inline-block;
+      border: 1px solid #e5e5e5;
+      /* padding: 10px 16px; */
+      border-radius: 9px;
+      margin-right: 10px;
+      font-size: 16px;
+      background: #fafafa;
+    }
+
+    .price-chip.selected {
+      background-color: #daf2e4;
+      color: #000000;
+      border-color: #daf2e4;
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%) scale(0.9);
+      background: #1f1f1f;
+      color: #fff;
+      padding: 14px 22px;
+      border-radius: 15px;
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 9999;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateX(-50%) scale(1);
+    }
+
+    .toast-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .toast-logo {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: #fff;
+      padding: 2px;
+    }
+
+    #startInput,
+    #endInput {
+      display: none;
+    }
+
+    /* 9. MODAL STYLING */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+
+    .payment-modal {
+      background: #fff;
+      width: 88%;
+      max-width: 360px;
+      border-radius: 20px;
+      padding: 24px 15px;
+      text-align: center;
+      animation: slideUp 0.2s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: #000;
+      margin-bottom: 25px;
+    }
+
+    .payment-options-grid {
+      display: flex;
+      justify-content: space-around;
+      gap: 10px;
+    }
+
+    .payment-option-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      flex: 1;
+    }
+
+    .payment-option-item img {
+      width: 50px;
+      height: 50px;
+      object-fit: contain;
+    }
+
+    .payment-option-item span {
+      font-size: 14px;
+      color: #333;
+      font-weight: 500;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="header">
+    <div class="header-left">
+      <img src="./assets/back-arrow-icon.png" alt="back-arrow" onclick="history.back()">
+      <h2>Ticket Details</h2>
+    </div>
+    <div class="timer" id="timer">05:00</div>
+  </div>
+  <div class="ticket-card">
+    <div class="ticket-date" id="ticketDate">16 Oct, 2002 | 12:27 AM</div>
+    <div class="ticket-body">
+      <div class="route-select">
+        <img class="route-icon" src="./assets/green-bus-icon.png" alt="bus">
+        <div class="input-wrapper">
+          <input id="routeInput" type="text" class="route-input" placeholder="Select or enter route" autocomplete="off">
+          <div class="dropdown"></div>
+        </div>
+        <div id="routeDisplay" class="route-display" style="display:none;">
+          <div>
+            <div id="routeNumber" class="route-number"></div>
+            <div id="routeDirection" class="route-direction"></div>
+          </div>
+          <img src="./assets/edit-icon.png" id="editRoute" alt="edit-icon" style=" width: 17px;
+      opacity: .7;">
+        </div>
+      </div>
+      <div class="divider"></div>
+
+
+      <div class="stops-wrap">
+
+        <div class="stops-rail">
+          <div class="stop-circle start"></div>
+
+          <div class="stop-dots">
+            <span class="dash short"></span>
+            <span class="dash long"></span>
+            <span class="dash long"></span>
+            <span class="dash short"></span>
+          </div>
+
+          <div class="stop-circle end"></div>
+
+
+        </div>
+
+        <div class="stops-text">
+
+          <div class="stop-content">
+            <div class="stop-label">Starting stop</div>
+            <div id="startDisplay" class="stop-display">
+              <span id="startText"></span>
+              <img src="./assets/edit-icon.png" id="editStart">
+            </div>
+            <div id="startInputWrap" class="input-wrapper">
+              <input id="startInput" placeholder="Enter starting stop">
+              <div id="startDropdown" class="dropdown"></div>
+            </div>
+          </div>
+
+          <div class="stop-content">
+            <div class="stop-label">Ending stop</div>
+            <div id="endDisplay" class="stop-display">
+              <span id="endText"></span>
+              <img src="./assets/edit-icon.png" id="editEnd">
+            </div>
+            <div id="endInputWrap" class="input-wrapper">
+              <input id="endInput" placeholder="Enter ending stop">
+              <div id="endDropdown" class="dropdown"></div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+
+
+
+      <div class="perforation"></div>
+      <div id="toggleSection" class="toggle">
+        <button class="active">By Fare</button>
+        <button>By Ending stop</button>
+      </div>
+      <div class="section-title">Ticket Price</div>
+      <div id="priceChips">
+        <span class="price-chip" data-price="10">10</span>
+        <span class="price-chip" data-price="20">20</span>
+        <span class="price-chip" data-price="30">30</span>
+        <span class="price-chip" data-price="40">40</span>
+      </div>
+      <div class="section-title">Select Tickets</div>
+      <div class="ticket-row">
+        <div class="ticket-label">
+          <div>Full</div>
+          <div class="fare" id="fullFare"></div>
+        </div>
+        <div class="counter">
+          <button onclick="change('full',-1)">−</button>
+          <span id="full">1</span>
+          <button onclick="change('full',1)">+</button>
+        </div>
+      </div>
+      <div class="ticket-row">
+        <div class="ticket-label">
+          <div>Half</div>
+          <div class="fare" id="halfFare"></div>
+        </div>
+        <div class="counter">
+          <button onclick="change('half',-1)">−</button>
+          <span id="half">0</span>
+          <button onclick="change('half',1)">+</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="pay-bar">
+    <div class="pay-using">
+      <div class="pay-label"> PAY USING <span class="caret"></span></div>
+      <div class="pay-method">
+        <img src="./assets/PayUsing-icon.png" alt="pay">
+        <span>Select</span>
+      </div>
+    </div>
+    <button class="pay-btn" id="payBtn">Pay</button>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- Payment Modal -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="payment-modal">
+      <div class="modal-title">Select Payment Mode</div>
+      <div class="payment-options-grid">
+        <div class="payment-option-item" onclick="selectPayment('PhonePe', './assets/phonepay-icon.png')">
+          <img src="./assets/phonepay-icon.png" alt="PhonePe">
+          <span>PhonePe</span>
+        </div>
+        <div class="payment-option-item" onclick="selectPayment('GPay', './assets/gpay-icon.png')">
+          <img src="./assets/gpay-icon.png" alt="GPay">
+          <span>GPay</span>
+        </div>
+        <div class="payment-option-item" onclick="selectPayment('Amazon', './assets/amazon-icon.png')">
+          <img src="./assets/amazon-icon.png" alt="Amazon">
+          <span>Amazon</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script >/* ---------------- DATE & TIME ONLY ---------------- */
+
+function updateDateTime() {
+  const d = new Date();
+
+  const months = [
+    "Jan",
+    "Feb",
+    "Mar",
+    "Apr",
+    "May",
+    "Jun",
+    "Jul",
+    "Aug",
+    "Sep",
+    "Oct",
+    "Nov",
+    "Dec",
+  ];
+
+  let h = d.getHours();
+  const m = String(d.getMinutes()).padStart(2, "0");
+  const ampm = h >= 12 ? "PM" : "AM";
+
+  h = h % 12 || 12;
+
+  document.getElementById("ticketDate").innerText =
+    `${d.getDate()} ${months[d.getMonth()]}, ${d.getFullYear()} | ${h}:${m} ${ampm}`;
+}
+
+setInterval(updateDateTime, 1000);
+updateDateTime();
+
+const AppState = {
+  mode: "FARE",
+  startIndex: null,
+  endIndex: null,
+  baseFare: 10,
+  full: 1,
+  half: 0,
+};
+
+/* ---------------- DOM REFERENCES ---------------- */
+
+const routeInput = document.getElementById("routeInput");
+const routeDisplay = document.getElementById("routeDisplay");
+const routeNumber = document.getElementById("routeNumber");
+const routeDirection = document.getElementById("routeDirection");
+const editRoute = document.getElementById("editRoute");
+
+const startInput = document.getElementById("startInput");
+const endInput = document.getElementById("endInput");
+
+const startDisplay = document.getElementById("startDisplay");
+const endDisplay = document.getElementById("endDisplay");
+
+const startText = document.getElementById("startText");
+const endText = document.getElementById("endText");
+
+const editStart = document.getElementById("editStart");
+const editEnd = document.getElementById("editEnd");
+
+const startDropdown = document.getElementById("startDropdown");
+const endDropdown = document.getElementById("endDropdown");
+
+const payBtn = document.getElementById("payBtn");
+const toggleButtons = document.querySelectorAll("#toggleSection button");
+const priceChips = document.querySelectorAll(".price-chip");
+const chipsContainer = document.getElementById("priceChips");
+
+const fullFareText = document.getElementById("fullFare");
+const halfFareText = document.getElementById("halfFare");
+
+/* ---------------- COUNTDOWN TIMER ---------------- */
+
+const timerElement = document.getElementById("timer");
+
+// 5 minutes in seconds
+let totalSeconds = 5 * 60;
+
+const countdown = setInterval(() => {
+  if (totalSeconds <= 0) {
+    clearInterval(countdown);
+    timerElement.innerText = "00:00";
+
+    showToast("Session Expired", true);
+
+    setTimeout(() => {
+      window.location.href = "index.html";
+    }, 2000);
+
+    return; // <-- IMPORTANT
+  }
+
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  timerElement.innerText =
+    String(minutes).padStart(2, "0") + ":" + String(seconds).padStart(2, "0");
+
+  totalSeconds--;
+}, 1000);
+
+/* ---------------- STOPS ---------------- */
+
+const STOPS = [
+  { code: "S1", name: "Kothrud Depot" },
+  { code: "S2", name: "Bharati Nagar" },
+  { code: "S3", name: "Kachara Depot Kothrud" },
+  { code: "S4", name: "Vanaj Company" },
+  { code: "S5", name: "Vanaj Corner" },
+  { code: "S6", name: "Pratik Nagar" },
+  { code: "S7", name: "Jai Bhavani Nagar" },
+  { code: "S8", name: "Anand Nagar Kothrud" },
+  { code: "S9", name: "Ideal Colony" },
+  { code: "S10", name: "More Vidyalay" },
+  { code: "S11", name: "Paud Phata Paud Road" },
+  { code: "S12", name: "Sndt College" },
+  { code: "S13", name: "Nal Stop" },
+  { code: "S14", name: "Sonal Hall" },
+  { code: "S15", name: "Garware College" },
+  { code: "S16", name: "Deccan Corner" },
+  { code: "S17", name: "Goodluck Chowk" },
+];
+
+/* ---------------- STATE CONTROLLER ---------------- */
+
+function setState(state) {
+  // Hide everything first
+  routeInput.style.display = "none";
+  routeDisplay.style.display = "none";
+
+  startInput.style.display = "none";
+  startDisplay.style.display = "none";
+
+  endInput.style.display = "none";
+  endDisplay.style.display = "none";
+
+  // Disable fare by default
+  disableToggleButtons();
+  chipsContainer.style.display = "none";
+  fullFareText.style.display = "none";
+  halfFareText.style.display = "none";
+  payBtn.disabled = true;
+
+  if (state === "ROUTE") {
+    routeInput.style.display = "block";
+  }
+
+  if (state === "START") {
+    routeDisplay.style.display = "flex";
+    startInput.style.display = "block";
+  }
+
+  if (state === "END") {
+    routeDisplay.style.display = "flex";
+    startDisplay.style.display = "flex";
+    endInput.style.display = "block";
+  }
+
+  if (state === "COMPLETE") {
+    routeDisplay.style.display = "flex";
+    startDisplay.style.display = "flex";
+    endDisplay.style.display = "flex";
+
+    enableToggleButtons();
+    chipsContainer.style.display = "flex";
+    fullFareText.style.display = "inline";
+    halfFareText.style.display = "inline";
+    payBtn.disabled = false;
+  }
+}
+
+/* ---------------- INITIAL ---------------- */
+
+setState("ROUTE");
+updateFareDisplay();
+updatePayButton();
+
+/* ---------------- ROUTE (LIVE DETECTION) ---------------- */
+
+/* ---------------- ROUTE COMPLETE ---------------- */
+
+routeInput.addEventListener("blur", () => {
+  if (!routeInput.value.trim()) return;
+
+  routeNumber.innerText = routeInput.value;
+  routeDirection.innerText = "towards Destination";
+
+  setState("START");
+});
+
+/* Allow Enter key to move forward */
+routeInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    routeInput.blur();
+  }
+});
+
+/* ---------------- START STOP ---------------- */
+
+startInput.addEventListener("input", renderStartStops);
+startInput.addEventListener("focus", renderStartStops);
+
+function renderStartStops() {
+  const value = startInput.value.toLowerCase();
+  startDropdown.innerHTML = "";
+
+  STOPS.filter((s) => s.name.toLowerCase().includes(value)).forEach(
+    (stop, index) => {
+      const item = document.createElement("div");
+      item.className = "dropdown-item";
+      item.innerHTML = `<div>${stop.code}</div><div>${stop.name}</div>`;
+
+      item.onclick = () => {
+        AppState.startIndex = index;
+        startText.innerText = stop.name;
+
+        startDropdown.style.display = "none";
+        setState("END");
+      };
+
+      startDropdown.appendChild(item);
+    },
+  );
+
+  startDropdown.style.display = "block";
+}
+
+/* ---------------- END STOP ---------------- */
+
+endInput.addEventListener("input", renderEndStops);
+endInput.addEventListener("focus", renderEndStops);
+
+function renderEndStops() {
+  if (AppState.startIndex === null) return;
+
+  const value = endInput.value.toLowerCase();
+  endDropdown.innerHTML = "";
+
+  STOPS.slice(AppState.startIndex + 1)
+    .filter((s) => s.name.toLowerCase().includes(value))
+    .forEach((stop) => {
+      const index = STOPS.findIndex((x) => x.code === stop.code);
+
+      const item = document.createElement("div");
+      item.className = "dropdown-item";
+      item.innerHTML = `<div>${stop.code}</div><div>${stop.name}</div>`;
+
+      item.onclick = () => {
+        AppState.endIndex = index;
+        endText.innerText = stop.name;
+
+        selectDefaultChip();
+        updateFareDisplay();
+        updatePayButton();
+
+        endDropdown.style.display = "none";
+        setState("COMPLETE");
+      };
+
+      endDropdown.appendChild(item);
+    });
+
+  endDropdown.style.display = "block";
+}
+
+/* ---------------- EDIT LOGIC ---------------- */
+
+editRoute.onclick = () => {
+  AppState.startIndex = null;
+  AppState.endIndex = null;
+
+  startInput.value = "";
+  endInput.value = "";
+
+  setState("ROUTE");
+};
+
+editStart.onclick = () => {
+  AppState.startIndex = null;
+  AppState.endIndex = null;
+  endInput.value = "";
+
+  setState("START");
+};
+
+editEnd.onclick = () => {
+  AppState.endIndex = null;
+  setState("END");
+};
+
+/* ---------------- FARE LOGIC (UNCHANGED) ---------------- */
+
+function disableToggleButtons() {
+  toggleButtons.forEach((btn) => (btn.style.pointerEvents = "none"));
+}
+
+function enableToggleButtons() {
+  toggleButtons.forEach((btn) => (btn.style.pointerEvents = "auto"));
+}
+
+toggleButtons.forEach((btn, index) => {
+  btn.addEventListener("click", () => {
+    toggleButtons.forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    if (index === 0) {
+      AppState.mode = "FARE";
+      chipsContainer.style.display = "flex";
+    } else {
+      AppState.mode = "STOP";
+      chipsContainer.style.display = "none";
+      clearChipSelection();
+      AppState.baseFare = 10;
+      updateFareDisplay();
+    }
+
+    updatePayButton();
+  });
+});
+
+priceChips.forEach((chip) => {
+  chip.addEventListener("click", () => {
+    if (AppState.mode !== "FARE") return;
+
+    clearChipSelection();
+    chip.classList.add("selected");
+
+    AppState.baseFare = parseInt(chip.dataset.price);
+    updateFareDisplay();
+    updatePayButton();
+  });
+});
+
+function clearChipSelection() {
+  priceChips.forEach((c) => c.classList.remove("selected"));
+}
+
+function selectDefaultChip() {
+  clearChipSelection();
+  priceChips.forEach((chip) => {
+    if (chip.dataset.price == "10") {
+      chip.classList.add("selected");
+    }
+  });
+}
+
+function change(type, delta) {
+  let val = AppState[type];
+
+  if (delta === 1 && val >= 5) {
+    return showToast(
+      type === "half"
+        ? "Maximum Child ticket reached"
+        : "Maximum Adult ticket reached",
+    );
+  }
+
+  if (delta === -1 && val <= 0) {
+    return showToast(type === "half" ? "Child count is 0" : "Adult count is 0");
+  }
+
+  AppState[type] += delta;
+  document.getElementById(type).innerText = AppState[type];
+
+  updatePayButton();
+}
+
+function updateFareDisplay() {
+  const fullFare = AppState.baseFare;
+  const halfFare = AppState.baseFare / 2;
+
+  fullFareText.innerText = `₹${fullFare}.0`;
+  halfFareText.innerText = `₹${halfFare}.0`;
+}
+
+function updatePayButton() {
+  if (AppState.startIndex === null || AppState.endIndex === null) {
+    payBtn.innerText = "Pay";
+    payBtn.disabled = true;
+    return;
+  }
+
+  const total =
+    AppState.full * AppState.baseFare + AppState.half * (AppState.baseFare / 2);
+
+  payBtn.innerText = `Pay ₹${total}.0`;
+  payBtn.disabled = false;
+}
+
+payBtn.addEventListener("click", () => {
+  if (AppState.startIndex === null || AppState.endIndex === null) {
+    showToast("Select both stops");
+    return;
+  }
+
+  showToast("Payment processing...");
+});
+
+/* ---------------- TOAST ---------------- */
+
+function showToast(msg, isSession = false) {
+  const t = document.getElementById("toast");
+
+  t.innerHTML = `
+    <div class="toast-content">
+      <img src="./assets/PMPML-LOGO.png" class="toast-logo">
+      <span>
+        ${msg}
+      </span>
+    </div>
+  `;
+
+  t.classList.add("show");
+
+  clearTimeout(t.timeout);
+
+  t.timeout = setTimeout(
+    () => {
+      t.classList.remove("show");
+    },
+    isSession ? 2000 : 2200,
+  );
+}
+/* ---------------- CLOSE DROPDOWN ---------------- */
+
+document.addEventListener("click", (e) => {
+  if (!startInput.parentElement.contains(e.target))
+    startDropdown.style.display = "none";
+
+  if (!endInput.parentElement.contains(e.target))
+    endDropdown.style.display = "none";
+});
+
+/* ---------------- MODAL LOGIC ---------------- */
+const modalOverlay = document.getElementById("modalOverlay");
+const payUsing = document.querySelector(".pay-using");
+const currentPayIcon = document.querySelector(".pay-method img");
+const currentPayName = document.querySelector(".pay-method span");
+
+payUsing.addEventListener("click", () => {
+  modalOverlay.style.display = "flex";
+});
+
+modalOverlay.addEventListener("click", (e) => {
+  if (e.target === modalOverlay) {
+    modalOverlay.style.display = "none";
+  }
+});
+
+function selectPayment(name, icon) {
+  currentPayName.innerText = name;
+  currentPayIcon.src = icon;
+  modalOverlay.style.display = "none";
+}
+</script>
+</body>
+
+</html>

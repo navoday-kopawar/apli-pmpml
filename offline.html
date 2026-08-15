@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="theme-color" content="#FFFAFA">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Apli PMPML">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Offline - Apli PMPML</title>
+
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/PMPML-LOGO.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./pwa-app.js" defer></script>
+
+  <style>
+    .offline-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 120px);
+      padding: 24px;
+      text-align: center;
+    }
+
+    .offline-card {
+      background: #ffffff;
+      border: 1px solid #eef2f5;
+      border-radius: 16px;
+      padding: 32px 24px;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .offline-icon {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 20px;
+      object-fit: contain;
+    }
+
+    .offline-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 12px;
+    }
+
+    .offline-desc {
+      font-size: 14px;
+      color: #666666;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .retry-btn {
+      background: #3FA1AE;
+      color: #ffffff;
+      border: none;
+      padding: 12px 28px;
+      font-size: 15px;
+      font-weight: 600;
+      border-radius: 24px;
+      cursor: pointer;
+      transition: background 0.2s ease, transform 0.1s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .retry-btn:active {
+      transform: scale(0.98);
+      background: #348893;
+    }
+
+    .offline-nav-list {
+      margin-top: 24px;
+      text-align: left;
+      border-top: 1px solid #f0f0f0;
+      padding-top: 16px;
+    }
+
+    .offline-nav-title {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #888888;
+      margin-bottom: 10px;
+    }
+
+    .offline-nav-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      color: #333333;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 14px;
+    }
+
+    .offline-nav-link:hover {
+      background: #f7fafb;
+    }
+
+    .offline-nav-link img {
+      width: 20px;
+      height: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="logo">
+      <a href="./index.html">
+        <img src="./assets/PMPML-LOGO.png" alt="PMPML Logo">
+      </a>
+    </div>
+    <div class="header-icons">
+      <a href="./index.html">
+        <img class="notification-icon" src="./assets/home-icon.png" alt="Home">
+      </a>
+    </div>
+  </header>
+
+  <!-- Offline Content -->
+  <div class="main">
+    <div class="offline-container">
+      <div class="offline-card">
+        <img src="./assets/PMPML-LOGO.png" alt="Apli PMPML" class="offline-icon">
+        <h1 class="offline-title">You're offline</h1>
+        <p class="offline-desc">
+          Some Apli PMPML live services (real-time bus tracking and ticket booking) require an active internet connection.
+          <br><br>
+          Please check your network settings and try again.
+        </p>
+        <button class="retry-btn" onclick="window.location.reload()">
+          🔄 Try Again
+        </button>
+
+        <div class="offline-nav-list">
+          <div class="offline-nav-title">Cached Pages</div>
+          <a href="./index.html" class="offline-nav-link">
+            <img src="./assets/home-icon.png" alt="Home"> Home
+          </a>
+          <a href="./route-timetable.html" class="offline-nav-link">
+            <img src="./assets/route-timetable-icon.png" alt="Timetable"> Route Timetable
+          </a>
+          <a href="./help.html" class="offline-nav-link">
+            <img src="./assets/help-icon.png" alt="Help"> Help & Support
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
