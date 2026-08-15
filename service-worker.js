@@ -1,4 +1,4 @@
-const CACHE_NAME = 'apli-pmpml-v1.0.1786804050193';
+const CACHE_NAME = 'apli-pmpml-v1.0.1786805178963';
 
 const STATIC_ASSETS = [
   './',
@@ -88,7 +88,6 @@ const NETWORK_ONLY_PATTERNS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      // Use Promise.allSettled so single missing optional assets don't fail full installation
       return Promise.allSettled(
         STATIC_ASSETS.map((url) =>
           cache.add(new Request(url, { cache: 'no-cache' })).catch((err) => {
@@ -115,7 +114,6 @@ self.addEventListener('activate', (event) => {
     }).then(() => {
       return self.clients.claim();
     }).then(() => {
-      // Notify all connected clients of activation
       return self.clients.matchAll().then((clients) => {
         clients.forEach((client) => {
           client.postMessage({ type: 'SW_ACTIVATED', cacheName: CACHE_NAME });
@@ -132,6 +130,12 @@ self.addEventListener('fetch', (event) => {
 
   // Skip non-GET requests
   if (request.method !== 'GET') {
+    return;
+  }
+
+  // Redirect any legacy github.io requests to production domain aplipmpml.com
+  if (url.hostname.includes('github.io')) {
+    event.respondWith(Response.redirect('https://aplipmpml.com/', 301));
     return;
   }
 
