@@ -1,4 +1,4 @@
-const CACHE_NAME = 'apli-pmpml-v1.0.1786806035889';
+const CACHE_NAME = 'apli-pmpml-v1.0.1786812306954';
 
 const STATIC_ASSETS = [
   './',
