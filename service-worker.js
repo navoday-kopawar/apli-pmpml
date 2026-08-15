@@ -1,4 +1,4 @@
-const CACHE_NAME = 'apli-pmpml-v1.0.1786805178963';
+const CACHE_NAME = 'apli-pmpml-v1.0.1786806035889';
 
 const STATIC_ASSETS = [
   './',
@@ -126,20 +126,14 @@ self.addEventListener('activate', (event) => {
 // Fetch Event
 self.addEventListener('fetch', (event) => {
   const { request } = event;
-  const url = new URL(request.url);
 
   // Skip non-GET requests
   if (request.method !== 'GET') {
     return;
   }
 
-  // Redirect any legacy github.io requests to production domain aplipmpml.com
-  if (url.hostname.includes('github.io')) {
-    event.respondWith(Response.redirect('https://aplipmpml.com/', 301));
-    return;
-  }
-
   // Bypass cache for real-time / sensitive API calls & version.json
+  const url = new URL(request.url);
   const isNetworkOnly = NETWORK_ONLY_PATTERNS.some((pattern) => pattern.test(url.pathname));
   if (isNetworkOnly) {
     event.respondWith(fetch(request));
