@@ -1,4 +1,4 @@
-const CACHE_NAME = 'apli-pmpml-v1.0.1786717350310';
+const CACHE_NAME = 'apli-pmpml-v1.0.1786804050193';
 
 const STATIC_ASSETS = [
   './',
@@ -91,7 +91,7 @@ self.addEventListener('install', (event) => {
       // Use Promise.allSettled so single missing optional assets don't fail full installation
       return Promise.allSettled(
         STATIC_ASSETS.map((url) =>
-          cache.add(url).catch((err) => {
+          cache.add(new Request(url, { cache: 'no-cache' })).catch((err) => {
             console.warn(`[Service Worker] Failed to cache asset during install: ${url}`, err);
           })
         )
@@ -100,19 +100,28 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activate Event
+// Activate Event: Purge old caches & claim all open clients immediately
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames.map((cacheName) => {
           if (cacheName !== CACHE_NAME) {
-            console.log(`[Service Worker] Deleting obsolete cache: ${cacheName}`);
+            console.log(`[Service Worker] Purging obsolete cache: ${cacheName}`);
             return caches.delete(cacheName);
           }
         })
       );
-    }).then(() => self.clients.claim())
+    }).then(() => {
+      return self.clients.claim();
+    }).then(() => {
+      // Notify all connected clients of activation
+      return self.clients.matchAll().then((clients) => {
+        clients.forEach((client) => {
+          client.postMessage({ type: 'SW_ACTIVATED', cacheName: CACHE_NAME });
+        });
+      });
+    })
   );
 });
 
@@ -126,18 +135,18 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Bypass cache for real-time / sensitive API calls
+  // Bypass cache for real-time / sensitive API calls & version.json
   const isNetworkOnly = NETWORK_ONLY_PATTERNS.some((pattern) => pattern.test(url.pathname));
   if (isNetworkOnly) {
     event.respondWith(fetch(request));
     return;
   }
 
-  // Navigation requests (HTML pages): Network-First with Offline fallback
+  // Navigation requests (HTML pages): Network-First with no-cache header & Offline fallback
   const isNavigation = request.mode === 'navigate' || (request.headers.get('accept') && request.headers.get('accept').includes('text/html'));
   if (isNavigation) {
     event.respondWith(
-      fetch(request)
+      fetch(new Request(request.url, { cache: 'no-cache' }))
         .then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200) {
             const responseToCache = networkResponse.clone();
@@ -160,12 +169,12 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Static Assets (CSS, JS, Images, Fonts): Cache-First with Network fallback
+  // Static Assets (CSS, JS, Images, Fonts): Cache-First with background revalidation
   event.respondWith(
     caches.match(request).then((cachedResponse) => {
       if (cachedResponse) {
-        // Fetch background update for cache freshness
-        fetch(request).then((networkResponse) => {
+        // Background update for freshness
+        fetch(new Request(request.url, { cache: 'no-cache' })).then((networkResponse) => {
           if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
             caches.open(CACHE_NAME).then((cache) => {
               cache.put(request, networkResponse);
@@ -177,7 +186,7 @@ self.addEventListener('fetch', (event) => {
 
       return fetch(request)
         .then((networkResponse) => {
-          if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+          if (!networkResponse || networkResponse.status !== 200 || networkResponse.type === 'basic') {
             return networkResponse;
           }
           const responseToCache = networkResponse.clone();
@@ -187,7 +196,6 @@ self.addEventListener('fetch', (event) => {
           return networkResponse;
         })
         .catch(() => {
-          // If image request fails offline and not cached, could return fallback icon if needed
           if (request.destination === 'image') {
             return caches.match('./assets/PMPML-LOGO.png');
           }

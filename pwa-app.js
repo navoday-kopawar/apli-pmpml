@@ -1,7 +1,7 @@
 /**
  * pwa-app.js
  * Apli PMPML Progressive Web App Controller
- * Handles Service Worker registration, version checking, install prompts, update toasts, and offline state notifications.
+ * Handles Service Worker registration, mobile version checking, install prompts, update toasts, and offline state notifications.
  */
 (function () {
   'use strict';
@@ -10,18 +10,21 @@
   let newWorker = null;
   let currentRegistration = null;
 
-  // 1. REGISTER SERVICE WORKER & VERSION CHECKING
+  // 1. REGISTER SERVICE WORKER WITH updateViaCache: 'none' FOR MOBILE BROWSERS
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function () {
-      navigator.serviceWorker.register('./service-worker.js', { scope: './' })
+      navigator.serviceWorker.register('./service-worker.js', {
+        scope: './',
+        updateViaCache: 'none' // CRITICAL: Forces mobile browsers to bypass HTTP cache for service worker script
+      })
         .then(function (registration) {
           currentRegistration = registration;
           console.log('[PWA] Service Worker registered with scope:', registration.scope);
 
-          // Check for app version updates against version.json
+          // Force check for updates against version.json
           checkForAppUpdates(registration);
 
-          // Check if an update is already waiting
+          // If an update is already waiting, prompt immediately
           if (registration.waiting) {
             showUpdateToast(registration.waiting);
           }
@@ -33,7 +36,7 @@
 
             installingWorker.onstatechange = function () {
               if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                console.log('[PWA] New service worker version found and installed!');
+                console.log('[PWA] New service worker installed! Displaying update prompt.');
                 showUpdateToast(installingWorker);
               }
             };
@@ -51,9 +54,29 @@
           window.location.reload();
         }
       });
+
+      // Listen for activation messages from Service Worker
+      navigator.serviceWorker.addEventListener('message', function (event) {
+        if (event.data && event.data.type === 'SW_ACTIVATED') {
+          console.log('[PWA] Service Worker activated with cache:', event.data.cacheName);
+        }
+      });
     });
 
-    // Re-check version on window focus
+    // MOBILE LIFECYCLE LISTENERS: Re-check version on App Resume / Visibility / Focus
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible' && currentRegistration) {
+        console.log('[PWA] App resumed / visible. Checking for updates...');
+        checkForAppUpdates(currentRegistration);
+      }
+    });
+
+    window.addEventListener('pageshow', function () {
+      if (currentRegistration) {
+        checkForAppUpdates(currentRegistration);
+      }
+    });
+
     window.addEventListener('focus', function () {
       if (currentRegistration) {
         checkForAppUpdates(currentRegistration);
@@ -75,12 +98,15 @@
         if (!data || !data.version) return;
 
         const storedVersion = localStorage.getItem('apli_pmpml_version');
-        console.log('[PWA] Current build version:', data.version, '| Stored:', storedVersion);
+        console.log('[PWA] Network Version:', data.version, '| Stored Client Version:', storedVersion);
 
         if (storedVersion && storedVersion !== data.version) {
           console.log('[PWA] Deployed version differs from client version! Triggering service worker update...');
           registration.update().then(function () {
             localStorage.setItem('apli_pmpml_version', data.version);
+            if (registration.waiting) {
+              showUpdateToast(registration.waiting);
+            }
           });
         } else {
           localStorage.setItem('apli_pmpml_version', data.version);
@@ -219,6 +245,8 @@
       updateBtn.onclick = function () {
         if (newWorker) {
           newWorker.postMessage({ type: 'SKIP_WAITING' });
+        } else if (currentRegistration && currentRegistration.waiting) {
+          currentRegistration.waiting.postMessage({ type: 'SKIP_WAITING' });
         }
       };
     }
